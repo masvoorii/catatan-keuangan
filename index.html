@@ -23,7 +23,7 @@
             <h1 class="text-lg font-bold">Catatan Keuangan</h1>
             <span id="welcome-sync-badge" class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500">Lokal</span>
           </div>
-          <p class="text-xs text-slate-500 mt-0.5">Pilih akun dan masukkan password untuk mulai mencatat.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Masukkan username dan password untuk mulai mencatat.</p>
         </div>
         <button id="welcome-theme-toggle" type="button" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs" title="Ganti Tema">
           <span class="theme-icon-dark hidden">☀️</span>
@@ -33,8 +33,8 @@
 
       <form id="welcome-login-form" class="space-y-3">
         <div>
-          <label for="welcome-profile-select" class="block text-xs font-medium text-slate-500 mb-1">Akun</label>
-          <select id="welcome-profile-select" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-sm font-medium"></select>
+          <label for="welcome-username-input" class="block text-xs font-medium text-slate-500 mb-1">Username</label>
+          <input type="text" id="welcome-username-input" autocomplete="username" placeholder="Masukkan username akun" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-sm" />
         </div>
         <div>
           <label for="welcome-password-input" class="block text-xs font-medium text-slate-500 mb-1">Password</label>
@@ -63,8 +63,8 @@
         <h3 id="confirm-title" class="text-base font-bold mb-1.5">Konfirmasi</h3>
         <p id="confirm-message" class="text-xs text-slate-600 dark:text-slate-300 mb-5 leading-relaxed"></p>
         <div class="flex justify-end gap-2">
-          <button id="confirm-cancel" class="px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800">Batal</button>
-          <button id="confirm-ok" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-blue-600 text-white">Ya</button>
+          <button id="confirm-cancel" type="button" class="px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800">Batal</button>
+          <button id="confirm-ok" type="button" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-blue-600 text-white">Ya</button>
         </div>
       </div>
     </div>
@@ -137,12 +137,14 @@
             <p id="profile-subtitle" class="text-xs text-slate-500">Nov 2026 • Budget Rp1.200.000</p>
           </div>
           <div class="flex items-center gap-1.5 flex-wrap">
-            <select id="profile-select" onchange="switchProfile(this.value)" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1.5 text-xs font-medium"></select>
             <button type="button" onclick="openNewAccountModal()" class="px-2.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-xs font-semibold text-blue-700 dark:text-blue-300">
               + Akun
             </button>
             <button type="button" onclick="openSetPasswordModal()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium">
               Ganti PW
+            </button>
+            <button type="button" onclick="confirmDeleteAccount()" class="px-2.5 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-xs font-medium text-rose-700 dark:text-rose-300">
+              Hapus Akun
             </button>
             <button type="button" onclick="lockAndLogout()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium">
               Keluar
@@ -300,8 +302,8 @@
       </div>
       <form id="new-account-form" class="space-y-3">
         <div>
-          <label class="block text-xs font-medium text-slate-500 mb-1">Nama Akun</label>
-          <input type="text" id="new-acc-name" placeholder="Contoh: Cadangan / Proyek" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+          <label class="block text-xs font-medium text-slate-500 mb-1">Username</label>
+          <input type="text" id="new-acc-name" placeholder="Contoh: cadangan" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-500 mb-1">Saldo Awal (Rp)</label>
@@ -407,7 +409,7 @@
           },
         };
       }
-      if (!raw.profiles || !raw.profiles.fachri) return getDefaultMultiState();
+      if (!raw.profiles || !Object.keys(raw.profiles).length) return getDefaultMultiState();
       Object.values(raw.profiles).forEach((p) => {
         if (!p.data) p.data = getFachriState();
         if (typeof p.passwordHash !== 'string' || !p.passwordHash) {
@@ -418,7 +420,7 @@
         if (!p.data.accounts) p.data.accounts = {};
       });
       if (!raw.activeProfileId || !raw.profiles[raw.activeProfileId]) {
-        raw.activeProfileId = 'fachri';
+        raw.activeProfileId = Object.keys(raw.profiles)[0];
       }
       return raw;
     }
@@ -466,12 +468,6 @@
       const unlocked = isSessionUnlocked();
       document.getElementById('welcome-screen').classList.toggle('hidden', unlocked);
       document.getElementById('app-shell').classList.toggle('hidden', !unlocked);
-
-      const welcomeSel = document.getElementById('welcome-profile-select');
-      const currentVal = welcomeSel.value || multiState.activeProfileId;
-      welcomeSel.innerHTML = Object.values(multiState.profiles)
-        .map((p) => `<option value="${p.id}" ${p.id === currentVal ? 'selected' : ''}>${p.name}</option>`)
-        .join('');
     }
 
     function lockAndLogout() {
@@ -483,42 +479,30 @@
 
     document.getElementById('welcome-login-form').addEventListener('submit', async function (e) {
       e.preventDefault();
-      const selectedId = document.getElementById('welcome-profile-select').value;
+      const uname = document.getElementById('welcome-username-input').value.trim().toLowerCase();
       const pw = document.getElementById('welcome-password-input').value;
-      const target = multiState.profiles[selectedId];
-      if (!target || !pw) return;
+      if (!uname || !pw) return;
 
+      const target = Object.values(multiState.profiles).find(
+        (p) => p.name.trim().toLowerCase() === uname || p.id.toLowerCase() === uname
+      );
       const hashed = await hashPassword(pw);
-      if (hashed !== target.passwordHash) {
-        showToast('Password salah.', 'error');
+
+      if (!target || hashed !== target.passwordHash) {
+        showToast('Username atau password salah.', 'error');
         document.getElementById('welcome-password-input').value = '';
         document.getElementById('welcome-password-input').focus();
         return;
       }
 
-      unlockedProfiles.add(selectedId);
-      multiState.activeProfileId = selectedId;
+      unlockedProfiles.add(target.id);
+      multiState.activeProfileId = target.id;
+      document.getElementById('welcome-username-input').value = '';
       document.getElementById('welcome-password-input').value = '';
       saveState();
       renderAll();
       showToast(`Selamat datang, ${target.name}.`);
     });
-
-    function switchProfile(id) {
-      const target = multiState.profiles[id];
-      if (!target) return;
-      multiState.activeProfileId = id;
-      saveState();
-      if (!unlockedProfiles.has(id)) {
-        document.getElementById('welcome-profile-select').value = id;
-        document.getElementById('welcome-password-input').value = '';
-        updateScreenGate();
-        document.getElementById('welcome-password-input').focus();
-        return;
-      }
-      renderAll();
-      showToast(`Pindah ke akun ${target.name}.`);
-    }
 
     function openSetPasswordModal() {
       if (!ensureUnlocked()) return;
@@ -576,7 +560,14 @@
       const bal = parseInt(document.getElementById('new-acc-balance').value, 10) || 0;
       const pw = document.getElementById('new-acc-password').value;
       if (!name || pw.length < 4) {
-        showToast('Nama akun dan password (min. 4 karakter) wajib diisi.', 'error');
+        showToast('Username dan password (min. 4 karakter) wajib diisi.', 'error');
+        return;
+      }
+      const exists = Object.values(multiState.profiles).some(
+        (p) => p.name.trim().toLowerCase() === name.toLowerCase()
+      );
+      if (exists) {
+        showToast('Username sudah dipakai.', 'error');
         return;
       }
 
@@ -595,6 +586,33 @@
       renderAll();
       showToast(`Akun "${name}" dibuat.`);
     });
+
+    function confirmDeleteAccount() {
+      if (!ensureUnlocked()) return;
+      const target = getActiveProfile();
+      if (!target) return;
+
+      openConfirmModal(
+        `Hapus Akun "${target.name}"?`,
+        `Seluruh transaksi dan saldo akun "${target.name}" akan dihapus permanen. Lanjutkan?`,
+        () => {
+          const deletedId = target.id;
+          unlockedProfiles.delete(deletedId);
+          delete multiState.profiles[deletedId];
+
+          const remainingIds = Object.keys(multiState.profiles);
+          if (!remainingIds.length) {
+            multiState = getDefaultMultiState();
+          } else {
+            multiState.activeProfileId = remainingIds[0];
+          }
+
+          saveState();
+          renderAll();
+          showToast(`Akun "${target.name}" dihapus.`);
+        }
+      );
+    }
 
     function formatRupiah(num) {
       const n = Math.round(Number(num) || 0);
@@ -932,11 +950,6 @@
     }
 
     function renderProfileUI() {
-      const sel = document.getElementById('profile-select');
-      sel.innerHTML = Object.values(multiState.profiles)
-        .map((p) => `<option value="${p.id}" ${p.id === multiState.activeProfileId ? 'selected' : ''}>${p.name}</option>`)
-        .join('');
-
       const profile = getActiveProfile();
       const data = profile.data;
       document.getElementById('profile-subtitle').textContent = data.isCanvas
@@ -1120,12 +1133,12 @@
     }
 
     Object.assign(window, {
-      switchProfile,
       lockAndLogout,
       openNewAccountModal,
       closeNewAccountModal,
       openSetPasswordModal,
       closePasswordModal,
+      confirmDeleteAccount,
       applyPreset,
       handleNextEnvelope,
       transferRolloverToDate,
