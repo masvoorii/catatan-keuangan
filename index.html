@@ -306,6 +306,9 @@
                 <button type="button" onclick="openEnvelopeReconfigureModal()" class="px-2.5 py-1.5 rounded-xl border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-xs font-medium">
                   Atur Ulang
                 </button>
+                <button type="button" onclick="deleteWeeklyEnvelopes()" class="px-2.5 py-1.5 rounded-xl border border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-medium">
+                  Hapus Amplop
+                </button>
                 <button onclick="handleNextEnvelope()" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold">
                   Rollover & Minggu Berikutnya
                 </button>
@@ -594,6 +597,25 @@
       modal.classList.remove('hidden');
       modal.classList.add('flex');
       document.getElementById('env-setup-count').focus();
+    }
+
+    function deleteWeeklyEnvelopes() {
+      if (!ensureUnlocked()) return;
+      const data = getCurrentData();
+      if (!data.envelopes || !data.envelopes.length) return;
+
+      openConfirmModal(
+        'Hapus Amplop Mingguan?',
+        'Seluruh amplop mingguan dan saldo Rollover akun ini akan dihapus. Riwayat transaksi lama tetap tersimpan.',
+        () => {
+          data.envelopes = [];
+          data.activeEnvelopeIndex = 0;
+          data.rolloverBalance = 0;
+          saveState();
+          renderAll();
+          showToast('Amplop mingguan dihapus.');
+        }
+      );
     }
 
     function openEnvelopeReconfigureModal() {
@@ -1479,6 +1501,7 @@
       closeNewAccountModal,
       enableWeeklyEnvelopes,
       openEnvelopeReconfigureModal,
+      deleteWeeklyEnvelopes,
       closeEnvelopeSetupModal,
       openWalletModal,
       closeWalletModal,
