@@ -37,7 +37,7 @@ A lightweight, offline-first **personal finance and envelope budgeting web appli
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/masvoorii/catatan-keuangan.git](https://github.com/masvoorii/catatan-keuangan.git)
+   git clone https://github.com/masvoorii/catatan-keuangan.git
    cd catatan-keuangan
    ```
 
