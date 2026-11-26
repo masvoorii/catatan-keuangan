@@ -38,7 +38,7 @@
         </div>
         <div>
           <label for="welcome-password-input" class="block text-xs font-medium text-slate-500 mb-1">Password</label>
-          <input type="password" id="welcome-password-input" minlength="4" placeholder="Masukkan password akun" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-sm" />
+          <input type="password" id="welcome-password-input" minlength="6" placeholder="Masukkan password akun" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-sm" />
         </div>
         <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition">
           Masuk
@@ -61,7 +61,11 @@
     <div id="confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4">
       <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-5 shadow-xl">
         <h3 id="confirm-title" class="text-base font-bold mb-1.5">Konfirmasi</h3>
-        <p id="confirm-message" class="text-xs text-slate-600 dark:text-slate-300 mb-5 leading-relaxed"></p>
+        <p id="confirm-message" class="text-xs text-slate-600 dark:text-slate-300 mb-4 leading-relaxed"></p>
+        <div id="confirm-password-wrap" class="hidden mb-4">
+          <label for="confirm-password-input" class="block text-xs font-medium text-slate-500 mb-1">Konfirmasi Password</label>
+          <input type="password" id="confirm-password-input" minlength="6" placeholder="Masukkan password akun" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+        </div>
         <div class="flex justify-end gap-2">
           <button id="confirm-cancel" type="button" class="px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800">Batal</button>
           <button id="confirm-ok" type="button" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-blue-600 text-white">Ya</button>
@@ -138,8 +142,12 @@
         <form id="password-form" class="space-y-3">
           <p id="password-modal-desc" class="text-xs text-slate-500"></p>
           <div>
+            <label class="block text-xs font-medium text-slate-500 mb-1">Password Lama</label>
+            <input type="password" id="old-password-input" minlength="6" placeholder="Password saat ini" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+          </div>
+          <div>
             <label class="block text-xs font-medium text-slate-500 mb-1">Password Baru</label>
-            <input type="password" id="password-input" minlength="4" placeholder="Minimal 4 karakter" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+            <input type="password" id="password-input" minlength="6" placeholder="Minimal 6 karakter" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
           </div>
           <div class="flex justify-end gap-2 pt-1">
             <button type="button" onclick="closePasswordModal()" class="px-3.5 py-2 rounded-xl text-xs bg-slate-100 dark:bg-slate-800">Batal</button>
@@ -245,22 +253,22 @@
       <section class="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4">
           <span class="text-xs text-slate-500">Sisa Dana</span>
-          <div id="stat-total-all" class="text-xl font-bold mt-1">Rp0</div>
+          <div id="stat-total-all" class="text-base sm:text-xl font-bold mt-1 break-words">Rp0</div>
           <p id="stat-total-spent" class="text-[11px] text-slate-400 mt-1">Terpakai: Rp0</p>
         </div>
         <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4">
           <span id="stat-card2-label" class="text-xs text-slate-500">bluSaving</span>
-          <div id="stat-blusaving" class="text-xl font-bold text-cyan-600 dark:text-cyan-400 mt-1">Rp0</div>
+          <div id="stat-blusaving" class="text-base sm:text-xl font-bold text-cyan-600 dark:text-cyan-400 mt-1 break-words">Rp0</div>
           <p id="stat-card2-sub" class="text-[11px] text-slate-400 mt-1">bluAccount: Rp0</p>
         </div>
         <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4">
           <span id="stat-card3-label" class="text-xs text-slate-500">GoPay</span>
-          <div id="stat-gopay" class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">Rp0</div>
+          <div id="stat-gopay" class="text-base sm:text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1 break-words">Rp0</div>
           <p id="stat-gopay-detail" class="text-[11px] text-slate-400 mt-1">Saldo aktif</p>
         </div>
         <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4">
           <span id="stat-envelope-label" class="text-xs text-slate-500">Amplop Minggu 1</span>
-          <div id="stat-envelope" class="text-xl font-bold text-amber-600 dark:text-amber-400 mt-1">Rp0</div>
+          <div id="stat-envelope" class="text-base sm:text-xl font-bold text-amber-600 dark:text-amber-400 mt-1 break-words">Rp0</div>
           <p id="stat-envelope-sub" class="text-[11px] text-slate-400 mt-1">Rollover: Rp0</p>
         </div>
       </section>
@@ -395,8 +403,12 @@
           <input type="text" inputmode="numeric" id="new-acc-balance" value="0" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm font-semibold" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-500 mb-1">Password Akun</label>
-          <input type="password" id="new-acc-password" placeholder="Minimal 4 karakter" minlength="4" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+          <label class="block text-xs font-medium text-slate-500 mb-1">Password Baru</label>
+          <input type="password" id="new-acc-password" placeholder="Minimal 6 karakter" minlength="6" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">Password Lama <span class="font-normal text-slate-400">(isi jika migrasi akun lama)</span></label>
+          <input type="password" id="new-acc-legacy-password" placeholder="Kosongkan jika akun benar-benar baru" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
         </div>
         <div class="flex justify-end gap-2 pt-1">
           <button type="button" onclick="closeNewAccountModal()" class="px-3.5 py-2 rounded-xl text-xs bg-slate-100 dark:bg-slate-800">Batal</button>
@@ -406,11 +418,20 @@
     </div>
   </div>
 
-  import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-  
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+    import { getDatabase, ref, get, set, remove, onValue } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signOut,
+      updatePassword,
+      deleteUser,
+      EmailAuthProvider,
+      reauthenticateWithCredential
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
     const FIREBASE_CONFIG = {
       apiKey: "AIzaSyD5cX7eb4c4KHxTkuauKtIIrtcM7fk8NAs",
@@ -421,19 +442,26 @@
       messagingSenderId: "390281515450",
       appId: "1:390281515450:web:fd8230f88885fcac414d83"
     };
-    const DB_PATH = 'masvoorii_pk';
-
-    const STORAGE_KEY = 'fachri_keuangan_profiles_v1';
+    const DB_ROOT = 'masvoorii_pk/users';
+    const LEGACY_STORAGE_KEY = 'fachri_keuangan_profiles_v1';
+    const STORAGE_PREFIX = 'fachri_keuangan_uid_';
     const THEME_KEY = 'fachri_keuangan_theme';
-    const FACHRI_DEFAULT_HASH = 'ef597a888cef1c26e524492fb437e11ec5de730df52c355fb545276441ce4cd7';
     const WALLET_COLORS = ['bg-blue-500', 'bg-emerald-500', 'bg-cyan-500', 'bg-pink-500', 'bg-indigo-500', 'bg-amber-500'];
     const getToday = () => new Date().toLocaleDateString('en-CA');
 
     const app = initializeApp(FIREBASE_CONFIG);
     const db = getDatabase(app);
     const auth = getAuth(app);
-    await signInAnonymously(auth);
-    const dbRef = ref(db, DB_PATH);
+
+    // Map username -> internal email so users keep typing plain usernames
+    function usernameToEmail(uname) {
+      const clean = uname.trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
+      return clean ? `${clean}@masvoorii-pk.local` : '';
+    }
+
+    function emailToUsername(email) {
+      return String(email || '').split('@')[0] || 'User';
+    }
 
     async function hashPassword(pw) {
       const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
@@ -485,90 +513,79 @@
       };
     }
 
-    function getDefaultMultiState() {
-      return {
-        activeProfileId: 'fachri',
-        profiles: {
-          fachri: { id: 'fachri', name: 'Fachri', passwordHash: FACHRI_DEFAULT_HASH, data: getFachriState() },
-        },
-      };
-    }
-
-    function normalizeState(raw) {
-      if (!raw || typeof raw !== 'object') return getDefaultMultiState();
-      if (raw.accounts && raw.envelopes && !raw.profiles) {
-        return {
-          activeProfileId: 'fachri',
-          profiles: {
-            fachri: { id: 'fachri', name: 'Fachri', passwordHash: FACHRI_DEFAULT_HASH, data: { ...getFachriState(), ...raw, isCanvas: false } },
-          },
+    function normalizeProfile(raw, uid, fallbackName = 'User') {
+      const base = raw && typeof raw === 'object' ? raw : {};
+      const name = (base.name || fallbackName).trim() || 'User';
+      const defaultData = name.toLowerCase() === 'fachri' ? getFachriState() : getBlankCanvasState(0);
+      const data = { ...defaultData, ...(base.data || {}) };
+      delete data.gopayCoins;
+      if (!Array.isArray(data.transactions)) data.transactions = [];
+      if (!Array.isArray(data.envelopes)) data.envelopes = [];
+      if (!data.accounts || !Object.keys(data.accounts).length) {
+        data.accounts = {
+          utama: { id: 'utama', name: 'Wallet Utama', initial: 0, balance: 0, color: 'bg-blue-500' },
         };
       }
-      if (!raw.profiles || !Object.keys(raw.profiles).length) return getDefaultMultiState();
-      Object.values(raw.profiles).forEach((p) => {
-        if (!p.data) p.data = getFachriState();
-        delete p.data.gopayCoins;
-        if (typeof p.passwordHash !== 'string' || !p.passwordHash) {
-          p.passwordHash = p.id === 'fachri' ? FACHRI_DEFAULT_HASH : '';
-        }
-        if (!Array.isArray(p.data.transactions)) p.data.transactions = [];
-        if (!Array.isArray(p.data.envelopes)) p.data.envelopes = [];
-        if (!p.data.accounts || !Object.keys(p.data.accounts).length) {
-          p.data.accounts = {
-            utama: { id: 'utama', name: 'Wallet Utama', initial: 0, balance: 0, color: 'bg-blue-500' },
-          };
-        }
-      });
-      if (!raw.activeProfileId || !raw.profiles[raw.activeProfileId]) {
-        raw.activeProfileId = Object.keys(raw.profiles)[0];
-      }
-      return raw;
+      return { uid, name, data };
     }
 
-    function loadLocalState() {
+    // Find legacy profile in localStorage (returns { data, passwordHash } for verification)
+    function findLegacyLocalProfile(username) {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? normalizeState(JSON.parse(raw)) : getDefaultMultiState();
+        const raw = localStorage.getItem(LEGACY_STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return Object.values(parsed?.profiles || {}).find(
+          (p) => p?.name?.trim().toLowerCase() === username.trim().toLowerCase()
+        ) || null;
       } catch {
-        return getDefaultMultiState();
+        return null;
       }
     }
 
-    let multiState = loadLocalState();
-    let unlockedProfiles = new Set();
+    async function verifyLegacyPassword(expectedHash, newPw, legacyPw) {
+      if (!expectedHash) return true;
+      const candidates = [legacyPw, newPw].filter(Boolean);
+      for (const pw of candidates) {
+        if ((await hashPassword(pw)) === expectedHash) return true;
+      }
+      return false;
+    }
+
+    let currentUser = null;
+    let currentProfile = null;
+    let unsubscribeDb = null;
+    let isRegistering = false;
+
+    function getUserRef(uid) {
+      return ref(db, `${DB_ROOT}/${uid}`);
+    }
 
     function getActiveProfile() {
-      return multiState.profiles[multiState.activeProfileId];
+      return currentProfile;
     }
 
     function getCurrentData() {
-      return getActiveProfile().data;
+      return currentProfile.data;
     }
 
     function isSessionUnlocked() {
-      const p = getActiveProfile();
-      return Boolean(p && p.passwordHash && unlockedProfiles.has(p.id));
+      return Boolean(currentUser && currentProfile);
     }
 
     function ensureUnlocked() {
       if (isSessionUnlocked()) return true;
       updateScreenGate();
-      showToast('Masukkan password akun terlebih dahulu.', 'warning');
+      showToast('Silakan login terlebih dahulu.', 'warning');
       return false;
     }
 
-    function saveState(syncAll = false) {
+    function saveState() {
+      if (!isSessionUnlocked()) return;
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(multiState));
+        localStorage.setItem(STORAGE_PREFIX + currentUser.uid, JSON.stringify(currentProfile));
       } catch {}
-      const pid = multiState.activeProfileId;
-      const targetRef = !syncAll && pid && multiState.profiles[pid]
-        ? ref(db, `${DB_PATH}/profiles/${pid}`)
-        : dbRef;
-      const payload = !syncAll && pid && multiState.profiles[pid]
-        ? multiState.profiles[pid]
-        : multiState;
-      set(targetRef, payload).catch(() => showToast('Gagal sinkron ke cloud.', 'error'));
+      set(getUserRef(currentUser.uid), currentProfile).catch(() => showToast('Gagal sinkron ke cloud.', 'error'));
     }
 
     function updateScreenGate() {
@@ -577,38 +594,73 @@
       document.getElementById('app-shell').classList.toggle('hidden', !unlocked);
     }
 
-    function lockAndLogout() {
-      unlockedProfiles.clear();
+    function setSyncStatus(status) {
+      const badges = [document.getElementById('sync-badge'), document.getElementById('welcome-sync-badge')];
+      badges.forEach((b) => {
+        if (!b) return;
+        if (status === 'online') {
+          b.textContent = 'Cloud Sync';
+          b.className = 'px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300';
+        } else if (status === 'offline') {
+          b.textContent = 'Offline';
+          b.className = 'px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300';
+        } else {
+          b.textContent = 'Auth Ready';
+          b.className = 'px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500';
+        }
+      });
+    }
+
+    function mapAuthError(err) {
+      const code = err?.code || '';
+      if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+        return 'Username atau password salah.';
+      }
+      if (code === 'auth/email-already-in-use') return 'Username sudah dipakai.';
+      if (code === 'auth/weak-password') return 'Password minimal 6 karakter.';
+      if (code === 'auth/too-many-requests') return 'Terlalu banyak percobaan. Coba lagi nanti.';
+      if (code === 'auth/network-request-failed') return 'Koneksi internet bermasalah.';
+      return err?.message || 'Gagal autentikasi.';
+    }
+
+    async function lockAndLogout() {
+      if (unsubscribeDb) {
+        unsubscribeDb();
+        unsubscribeDb = null;
+      }
+      await signOut(auth).catch(() => {});
+      currentUser = null;
+      currentProfile = null;
       document.getElementById('welcome-password-input').value = '';
       updateScreenGate();
+      setSyncStatus('ready');
       showToast('Akun dikunci.');
     }
 
     document.getElementById('welcome-login-form').addEventListener('submit', async function (e) {
       e.preventDefault();
-      const uname = document.getElementById('welcome-username-input').value.trim().toLowerCase();
+      const uname = document.getElementById('welcome-username-input').value.trim();
       const pw = document.getElementById('welcome-password-input').value;
-      if (!uname || !pw) return;
+      const email = usernameToEmail(uname);
+      if (!email || !pw) return;
 
-      const target = Object.values(multiState.profiles).find(
-        (p) => p.name.trim().toLowerCase() === uname || p.id.toLowerCase() === uname
-      );
-      const hashed = await hashPassword(pw);
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.textContent = 'Memeriksa...';
 
-      if (!target || hashed !== target.passwordHash) {
-        showToast('Username atau password salah.', 'error');
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email, pw);
+        document.getElementById('welcome-username-input').value = '';
+        document.getElementById('welcome-password-input').value = '';
+        showToast(`Selamat datang, ${cred.user.displayName || uname}.`);
+      } catch (err) {
+        showToast(mapAuthError(err), 'error');
         document.getElementById('welcome-password-input').value = '';
         document.getElementById('welcome-password-input').focus();
-        return;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Masuk';
       }
-
-      unlockedProfiles.add(target.id);
-      multiState.activeProfileId = target.id;
-      document.getElementById('welcome-username-input').value = '';
-      document.getElementById('welcome-password-input').value = '';
-      saveState();
-      renderAll();
-      showToast(`Selamat datang, ${target.name}.`);
     });
 
     function enableWeeklyEnvelopes() {
@@ -751,7 +803,6 @@
         w.initial = initial;
         w.balance = balance;
 
-        // Catat selisih saldo ke riwayat transaksi agar mutasi saldo tetap terlacak.
         if (syncTx && diff !== 0) {
           const syncNote = diff < 0
             ? `Penyesuaian saldo ${name} (-${formatRupiah(Math.abs(diff))})`
@@ -813,12 +864,13 @@
       if (!ensureUnlocked()) return;
       const profile = getActiveProfile();
       document.getElementById('password-modal-title').textContent = `Ganti Password: ${profile.name}`;
-      document.getElementById('password-modal-desc').textContent = 'Masukkan password baru (minimal 4 karakter).';
+      document.getElementById('password-modal-desc').textContent = 'Masukkan password lama dan password baru (min. 6 karakter).';
+      document.getElementById('old-password-input').value = '';
       document.getElementById('password-input').value = '';
       const modal = document.getElementById('password-modal');
       modal.classList.remove('hidden');
       modal.classList.add('flex');
-      document.getElementById('password-input').focus();
+      document.getElementById('old-password-input').focus();
     }
 
     function closePasswordModal() {
@@ -830,23 +882,28 @@
     document.getElementById('password-form').addEventListener('submit', async function (e) {
       e.preventDefault();
       if (!ensureUnlocked()) return;
-      const pw = document.getElementById('password-input').value;
-      if (pw.length < 4) {
-        showToast('Password minimal 4 karakter.', 'error');
+      const oldPw = document.getElementById('old-password-input').value;
+      const newPw = document.getElementById('password-input').value;
+      if (newPw.length < 6) {
+        showToast('Password minimal 6 karakter.', 'error');
         return;
       }
-      const profile = getActiveProfile();
-      profile.passwordHash = await hashPassword(pw);
-      saveState();
-      closePasswordModal();
-      renderAll();
-      showToast(`Password akun ${profile.name} diperbarui.`);
+      try {
+        const cred = EmailAuthProvider.credential(currentUser.email, oldPw);
+        await reauthenticateWithCredential(currentUser, cred);
+        await updatePassword(currentUser, newPw);
+        closePasswordModal();
+        showToast(`Password akun ${currentProfile.name} diperbarui.`);
+      } catch (err) {
+        showToast(mapAuthError(err), 'error');
+      }
     });
 
     function openNewAccountModal() {
       document.getElementById('new-acc-name').value = '';
       document.getElementById('new-acc-balance').value = '0';
       document.getElementById('new-acc-password').value = '';
+      document.getElementById('new-acc-legacy-password').value = '';
       const modal = document.getElementById('new-account-modal');
       modal.classList.remove('hidden');
       modal.classList.add('flex');
@@ -864,32 +921,93 @@
       const name = document.getElementById('new-acc-name').value.trim();
       const bal = parseRupiahInput(document.getElementById('new-acc-balance').value) || 0;
       const pw = document.getElementById('new-acc-password').value;
-      if (!name || pw.length < 4) {
-        showToast('Username dan password (min. 4 karakter) wajib diisi.', 'error');
-        return;
-      }
-      const exists = Object.values(multiState.profiles).some(
-        (p) => p.name.trim().toLowerCase() === name.toLowerCase()
-      );
-      if (exists) {
-        showToast('Username sudah dipakai.', 'error');
+      const legacyPw = document.getElementById('new-acc-legacy-password').value;
+      const email = usernameToEmail(name);
+      if (!name || !email || pw.length < 6) {
+        showToast('Username dan password (min. 6 karakter) wajib diisi.', 'error');
         return;
       }
 
-      const id = 'acc_' + Date.now().toString(36);
-      const pwHash = await hashPassword(pw);
-      multiState.profiles[id] = {
-        id,
-        name,
-        passwordHash: pwHash,
-        data: getBlankCanvasState(bal),
-      };
-      unlockedProfiles.add(id);
-      multiState.activeProfileId = id;
-      saveState();
-      closeNewAccountModal();
-      renderAll();
-      showToast(`Akun "${name}" dibuat.`);
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.textContent = 'Membuat...';
+      isRegistering = true;
+
+      let createdUser = null;
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, pw);
+        createdUser = cred.user;
+
+        // Check cloud legacy profiles first, then localStorage fallback, verifying old password hash
+        let legacyData = null;
+        let legacyCloudKey = null;
+        let cloudChecked = false;
+        try {
+          const snap = await get(ref(db, 'masvoorii_pk/profiles'));
+          const legacyProfiles = snap.val();
+          if (legacyProfiles && typeof legacyProfiles === 'object') {
+            cloudChecked = true;
+            const entry = Object.entries(legacyProfiles).find(
+              ([, p]) => p?.name?.trim().toLowerCase() === name.toLowerCase()
+            );
+            if (entry) {
+              const [oldKey, oldProfile] = entry;
+              const ok = await verifyLegacyPassword(oldProfile?.passwordHash, pw, legacyPw);
+              if (!ok) {
+                await deleteUser(createdUser).catch(() => signOut(auth));
+                createdUser = null;
+                showToast('Akun lama ditemukan. Masukkan Password Lama yang benar untuk migrasi.', 'error');
+                document.getElementById('new-acc-legacy-password').focus();
+                return;
+              }
+              legacyData = oldProfile?.data || null;
+              legacyCloudKey = oldKey;
+            }
+          }
+        } catch {}
+
+        if (!legacyData && !cloudChecked) {
+          const localLegacy = findLegacyLocalProfile(name);
+          if (localLegacy) {
+            const ok = await verifyLegacyPassword(localLegacy.passwordHash, pw, legacyPw);
+            if (!ok) {
+              await deleteUser(createdUser).catch(() => signOut(auth));
+              createdUser = null;
+              showToast('Data lokal lama ditemukan. Masukkan Password Lama yang benar untuk migrasi.', 'error');
+              document.getElementById('new-acc-legacy-password').focus();
+              return;
+            }
+            legacyData = localLegacy.data || null;
+          }
+        }
+
+        const initialData = legacyData
+          ? normalizeProfile({ name, data: legacyData }, createdUser.uid, name).data
+          : name.toLowerCase() === 'fachri'
+          ? getFachriState()
+          : getBlankCanvasState(bal);
+
+        const freshProfile = { uid: createdUser.uid, name, data: initialData };
+        await set(getUserRef(createdUser.uid), freshProfile);
+        if (legacyCloudKey) {
+          await remove(ref(db, `masvoorii_pk/profiles/${legacyCloudKey}`)).catch(() => {});
+        }
+        try {
+          localStorage.setItem(STORAGE_PREFIX + createdUser.uid, JSON.stringify(freshProfile));
+        } catch {}
+
+        isRegistering = false;
+        attachUserSession(createdUser, freshProfile);
+        closeNewAccountModal();
+        showToast(legacyData ? `Akun "${name}" dibuat & data lama berhasil dimigrasi.` : `Akun "${name}" dibuat.`);
+      } catch (err) {
+        if (createdUser) await deleteUser(createdUser).catch(() => signOut(auth));
+        showToast(mapAuthError(err), 'error');
+      } finally {
+        isRegistering = false;
+        btn.disabled = false;
+        btn.textContent = 'Buat';
+      }
     });
 
     function confirmDeleteAccount() {
@@ -899,23 +1017,27 @@
 
       openConfirmModal(
         `Hapus Akun "${target.name}"?`,
-        `Seluruh transaksi dan saldo akun "${target.name}" akan dihapus permanen. Lanjutkan?`,
-        () => {
-          const deletedId = target.id;
-          unlockedProfiles.delete(deletedId);
-          delete multiState.profiles[deletedId];
-
-          const remainingIds = Object.keys(multiState.profiles);
-          if (!remainingIds.length) {
-            multiState = getDefaultMultiState();
-          } else {
-            multiState.activeProfileId = remainingIds[0];
+        `Seluruh transaksi, saldo, dan login akun "${target.name}" akan dihapus permanen. Masukkan password untuk konfirmasi.`,
+        async (pw) => {
+          if (!pw) {
+            showToast('Password wajib diisi untuk menghapus akun.', 'error');
+            return false;
           }
-
-          saveState(true);
-          renderAll();
-          showToast(`Akun "${target.name}" dihapus.`);
-        }
+          const uid = currentUser.uid;
+          try {
+            const cred = EmailAuthProvider.credential(currentUser.email, pw);
+            await reauthenticateWithCredential(currentUser, cred);
+            await remove(getUserRef(uid));
+            localStorage.removeItem(STORAGE_PREFIX + uid);
+            await deleteUser(currentUser);
+            showToast(`Akun "${target.name}" dihapus.`);
+            return true;
+          } catch (err) {
+            showToast(mapAuthError(err), 'error');
+            return false;
+          }
+        },
+        { requirePassword: true }
       );
     }
 
@@ -979,13 +1101,20 @@
     }
 
     let confirmCallback = null;
-    function openConfirmModal(title, message, onConfirm) {
+    let confirmNeedsPw = false;
+    function openConfirmModal(title, message, onConfirm, opts = {}) {
       document.getElementById('confirm-title').textContent = title;
       document.getElementById('confirm-message').textContent = message;
       confirmCallback = onConfirm;
+      confirmNeedsPw = Boolean(opts.requirePassword);
+      const pwWrap = document.getElementById('confirm-password-wrap');
+      const pwInput = document.getElementById('confirm-password-input');
+      pwWrap.classList.toggle('hidden', !confirmNeedsPw);
+      pwInput.value = '';
       const modal = document.getElementById('confirm-modal');
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+      if (confirmNeedsPw) pwInput.focus();
     }
 
     function closeConfirmModal() {
@@ -993,12 +1122,15 @@
       modal.classList.add('hidden');
       modal.classList.remove('flex');
       confirmCallback = null;
+      confirmNeedsPw = false;
     }
 
     document.getElementById('confirm-cancel').addEventListener('click', closeConfirmModal);
-    document.getElementById('confirm-ok').addEventListener('click', () => {
-      if (confirmCallback) confirmCallback();
-      closeConfirmModal();
+    document.getElementById('confirm-ok').addEventListener('click', async () => {
+      if (!confirmCallback) return closeConfirmModal();
+      const pw = confirmNeedsPw ? document.getElementById('confirm-password-input').value : undefined;
+      const result = await confirmCallback(pw);
+      if (result !== false) closeConfirmModal();
     });
 
     function syncThemeIcons(isDark) {
@@ -1228,14 +1360,14 @@
 
     function exportData() {
       if (!ensureUnlocked()) return;
-      const blob = new Blob([JSON.stringify(multiState, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(currentProfile, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `catatan-keuangan-${getToday()}.json`;
+      a.download = `catatan-keuangan-${currentProfile.name.toLowerCase()}-${getToday()}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast('Backup diunduh.');
+      showToast('Backup akun diunduh.');
     }
 
     function importData(event) {
@@ -1246,10 +1378,23 @@
       reader.onload = function (e) {
         try {
           const imported = JSON.parse(e.target.result);
-          multiState = normalizeState(imported);
-          saveState(true);
+          // Support both new single-profile backup and legacy multi-profile backup
+          const rawProfile = imported?.profiles
+            ? Object.values(imported.profiles).find(
+                (p) => p.name?.trim().toLowerCase() === currentProfile.name.trim().toLowerCase()
+              ) || Object.values(imported.profiles)[0]
+            : imported?.accounts && imported?.envelopes
+            ? { name: currentProfile.name, data: imported }
+            : imported;
+
+          currentProfile = normalizeProfile(
+            { ...rawProfile, name: currentProfile.name },
+            currentUser.uid,
+            currentProfile.name
+          );
+          saveState();
           renderAll();
-          showToast('Data dipulihkan.');
+          showToast('Data akun dipulihkan.');
         } catch {
           showToast('File JSON tidak valid.', 'error');
         }
@@ -1261,7 +1406,7 @@
     function confirmResetMonth() {
       if (!ensureUnlocked()) return;
       const profile = getActiveProfile();
-      const isFachri = profile.id === 'fachri';
+      const isFachri = profile.name.trim().toLowerCase() === 'fachri';
       openConfirmModal(
         `Reset ${profile.name}?`,
         isFachri
@@ -1300,7 +1445,7 @@
         opts.push('<option value="rollover">Rollover</option>');
       }
       Object.values(data.accounts).forEach((acc) => {
-        opts.push(`<option value="${acc.id}">${acc.name}</option>`);
+        opts.push(`<option value="${escapeHtml(acc.id)}">${escapeHtml(acc.name)}</option>`);
       });
       selectEl.innerHTML = opts.join('');
     }
@@ -1411,7 +1556,7 @@
           return `
             <div class="rounded-xl border p-3 ${style}">
               <div class="flex items-center justify-between text-[11px] mb-1">
-                <span class="font-semibold">${env.name}</span>
+                <span class="font-semibold">${escapeHtml(env.name)}</span>
                 <span class="text-slate-500">${statusText}</span>
               </div>
               <div class="text-sm font-bold ${env.balance < 0 ? 'text-rose-600' : ''}">${formatRupiah(env.balance)}</div>
@@ -1438,7 +1583,7 @@
           return `
             <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-3.5">
               <div class="flex items-center justify-between gap-2 mb-1">
-                <span class="text-xs font-semibold">${acc.name}</span>
+                <span class="text-xs font-semibold">${escapeHtml(acc.name)}</span>
                 <div class="flex items-center gap-2">
                   <span class="text-[11px] text-slate-400">${pct}%</span>
                   <button type="button" onclick="openWalletModal('${acc.id}')" class="text-[11px] text-slate-400 hover:text-blue-600" title="Edit Wallet">Edit</button>
@@ -1498,7 +1643,7 @@
                   <tr>
                     <td class="py-2.5 px-2 whitespace-nowrap text-slate-500">${formatDateIndo(tx.date)}</td>
                     <td class="py-2.5 px-2 font-medium">${escapeHtml(tx.note)}</td>
-                    <td class="py-2.5 px-2 whitespace-nowrap text-slate-500">${getAccountLabel(tx.accountKey, envNum, tx.accountLabel)}</td>
+                    <td class="py-2.5 px-2 whitespace-nowrap text-slate-500">${escapeHtml(getAccountLabel(tx.accountKey, envNum, tx.accountLabel))}</td>
                     <td class="py-2.5 px-2 whitespace-nowrap text-right font-semibold ${amtClass}">${amtPrefix}${formatRupiah(tx.amount)}</td>
                     <td class="py-2.5 px-2 whitespace-nowrap text-right">
                       <button onclick="openEditModal('${tx.id}')" class="px-1.5 py-1 text-slate-500 hover:text-blue-600" title="Edit">Edit</button>
@@ -1550,32 +1695,72 @@
       renderTransactions,
     });
 
+    function loadCachedProfile(uid, fallbackName) {
+      try {
+        const raw = localStorage.getItem(STORAGE_PREFIX + uid);
+        if (raw) return normalizeProfile(JSON.parse(raw), uid, fallbackName);
+      } catch {}
+      return normalizeProfile(null, uid, fallbackName);
+    }
+
+    function attachUserSession(user, preloadedProfile = null) {
+      if (unsubscribeDb) {
+        unsubscribeDb();
+        unsubscribeDb = null;
+      }
+      currentUser = user;
+      const uname = preloadedProfile?.name || user.displayName || emailToUsername(user.email);
+      currentProfile = preloadedProfile || loadCachedProfile(user.uid, uname);
+      document.getElementById('input-date').value = getToday();
+      renderAll();
+
+      const userRef = getUserRef(user.uid);
+      unsubscribeDb = onValue(userRef, (snapshot) => {
+        const val = snapshot.val();
+        if (val) {
+          currentProfile = normalizeProfile(val, user.uid, uname);
+          try {
+            localStorage.setItem(STORAGE_PREFIX + user.uid, JSON.stringify(currentProfile));
+          } catch {}
+          renderAll();
+        } else {
+          set(userRef, currentProfile);
+        }
+        setSyncStatus('online');
+      }, () => {
+        setSyncStatus('offline');
+      });
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       ['input-amount', 'edit-amount', 'new-acc-balance', 'env-setup-amount', 'wallet-initial', 'wallet-balance'].forEach(attachAutoDotFormat);
       document.getElementById('input-date').value = getToday();
       initTheme();
-      renderAll();
+      updateScreenGate();
 
-      const badge = document.getElementById('sync-badge');
-      const welcomeBadge = document.getElementById('welcome-sync-badge');
-      onValue(dbRef, (snapshot) => {
-        const val = snapshot.val();
-        if (val) {
-          multiState = normalizeState(val);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(multiState));
-          renderAll();
-        } else {
-          set(dbRef, multiState);
+      // Auto-close mobile sandwich menu on outside tap or Escape
+      document.addEventListener('click', (e) => {
+        const menu = document.getElementById('mobile-menu');
+        if (menu?.open && !menu.contains(e.target)) menu.removeAttribute('open');
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') document.getElementById('mobile-menu')?.removeAttribute('open');
+      });
+
+      onAuthStateChanged(auth, (user) => {
+        if (isRegistering) return;
+        if (!user) {
+          if (unsubscribeDb) {
+            unsubscribeDb();
+            unsubscribeDb = null;
+          }
+          currentUser = null;
+          currentProfile = null;
+          updateScreenGate();
+          setSyncStatus('ready');
+          return;
         }
-        [badge, welcomeBadge].forEach((b) => {
-          if (!b) return;
-          b.textContent = 'Cloud Sync';
-          b.className = 'px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300';
-        });
-      }, () => {
-        [badge, welcomeBadge].forEach((b) => {
-          if (b) b.textContent = 'Offline';
-        });
+        attachUserSession(user);
       });
     });
   </script>
