@@ -211,7 +211,7 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-1.5 flex-wrap">
           <button id="theme-toggle" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs" title="Ganti Tema">
             <span class="theme-icon-dark hidden">☀️</span>
             <span class="theme-icon-light">🌙</span>
@@ -302,14 +302,14 @@
                 <h2 id="envelope-section-title" class="text-sm font-bold">Amplop Tunai (Rp400.000)</h2>
                 <p class="text-xs text-slate-500">Sisa amplop mingguan masuk ke Rollover</p>
               </div>
-              <div class="flex items-center gap-1.5">
-                <button type="button" onclick="openEnvelopeReconfigureModal()" class="px-2.5 py-1.5 rounded-xl border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-xs font-medium">
+              <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+                <button type="button" onclick="openEnvelopeReconfigureModal()" class="px-2.5 py-1.5 rounded-xl border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-xs font-medium whitespace-nowrap">
                   Atur Ulang
                 </button>
-                <button type="button" onclick="deleteWeeklyEnvelopes()" class="px-2.5 py-1.5 rounded-xl border border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-medium">
+                <button type="button" onclick="deleteWeeklyEnvelopes()" class="px-2.5 py-1.5 rounded-xl border border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-medium whitespace-nowrap">
                   Hapus Amplop
                 </button>
-                <button onclick="handleNextEnvelope()" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold">
+                <button onclick="handleNextEnvelope()" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold whitespace-nowrap">
                   Rollover & Minggu Berikutnya
                 </button>
               </div>
@@ -354,9 +354,9 @@
       <section class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
           <h2 class="text-sm font-bold">Riwayat Pengeluaran</h2>
-          <div class="flex gap-2">
-            <select id="filter-account" onchange="renderTransactions()" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1.5 text-xs"></select>
-            <input type="text" id="search-note" oninput="renderTransactions()" placeholder="Cari catatan..." class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1.5 text-xs" />
+          <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <select id="filter-account" onchange="renderTransactions()" class="w-full sm:w-auto rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1.5 text-xs"></select>
+            <input type="text" id="search-note" oninput="renderTransactions()" placeholder="Cari catatan..." class="w-full sm:w-auto min-w-0 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1.5 text-xs" />
           </div>
         </div>
         <div id="transactions-container" class="overflow-x-auto"></div>
