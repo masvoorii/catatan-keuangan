@@ -300,36 +300,36 @@
         <!-- Kanan: Amplop & Saldo Wallet -->
         <section class="lg:col-span-7 space-y-5">
 
-          <!-- Amplop Tunai Mingguan -->
-          <div id="envelope-section" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+<!-- Amplop Tunai Mingguan -->
+          <div id="envelope-section" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
               <div>
                 <h2 id="envelope-section-title" class="text-sm font-bold">Amplop Tunai (Rp400.000)</h2>
                 <p class="text-xs text-slate-500">Sisa amplop mingguan masuk ke Rollover</p>
               </div>
-              <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
-                <button type="button" onclick="openEnvelopeReconfigureModal()" class="px-2.5 py-1.5 rounded-xl border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-xs font-medium whitespace-nowrap">
+              <div class="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-1.5 w-full sm:w-auto">
+                <button type="button" onclick="openEnvelopeReconfigureModal()" class="px-2.5 py-1.5 rounded-xl border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-xs font-medium whitespace-nowrap text-center">
                   Atur Ulang
                 </button>
-                <button type="button" onclick="deleteWeeklyEnvelopes()" class="px-2.5 py-1.5 rounded-xl border border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-medium whitespace-nowrap">
+                <button type="button" onclick="deleteWeeklyEnvelopes()" class="px-2.5 py-1.5 rounded-xl border border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-medium whitespace-nowrap text-center">
                   Hapus Amplop
                 </button>
-                <button onclick="handleNextEnvelope()" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold whitespace-nowrap">
-                  Rollover & Minggu Berikutnya
+                <button onclick="handleNextEnvelope()" class="col-span-2 sm:col-span-1 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold whitespace-nowrap text-center">
+                  Rollover &amp; Minggu Berikutnya
                 </button>
               </div>
             </div>
 
             <div id="envelopes-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-3"></div>
 
-            <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-3.5 py-2.5 flex items-center justify-between gap-2">
+            <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <span class="text-xs font-semibold">Saldo Rollover</span>
                 <p class="text-[11px] text-slate-500">Sisa amplop mingguan</p>
               </div>
-              <div class="flex items-center gap-2.5">
+              <div class="flex items-center gap-2.5 ml-auto">
                 <span id="rollover-balance" class="text-sm font-bold text-amber-600 dark:text-amber-400">Rp0</span>
-                <button onclick="transferRolloverToDate()" class="px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-600 text-[11px] font-medium hover:bg-slate-100 dark:hover:bg-slate-700">
+                <button onclick="transferRolloverToDate()" class="px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-600 text-[11px] font-medium hover:bg-slate-100 dark:hover:bg-slate-700 whitespace-nowrap">
                   + Ngedate
                 </button>
               </div>
