@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catatan Keuangan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-16">
+
+  <!-- Toast -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
+
+  <!-- Welcome / Landing Screen -->
+  <div id="welcome-screen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-5">
+      <div class="flex items-start justify-between gap-2">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-bold">Catatan Keuangan</h1>
+            <span id="welcome-sync-badge" class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500">Lokal</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">Pilih akun dan masukkan password untuk mulai mencatat.</p>
+        </div>
+        <button id="welcome-theme-toggle" type="button" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs" title="Ganti Tema">
+          <span class="theme-icon-dark hidden">☀️</span>
+          <span class="theme-icon-light">🌙</span>
+        </button>
+      </div>
+
+      <form id="welcome-login-form" class="space-y-3">
+        <div>
+          <label for="welcome-profile-select" class="block text-xs font-medium text-slate-500 mb-1">Akun</label>
+          <select id="welcome-profile-select" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-sm font-medium"></select>
+        </div>
+        <div>
+          <label for="welcome-password-input" class="block text-xs font-medium text-slate-500 mb-1">Password</label>
+          <input type="password" id="welcome-password-input" minlength="4" placeholder="Masukkan password akun" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-sm" />
+        </div>
+        <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition">
+          Masuk
+        </button>
+      </form>
+
+      <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <span class="text-xs text-slate-500">Belum punya akun?</span>
+        <button type="button" onclick="openNewAccountModal()" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+          + Buat Akun Baru
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Utama -->
+  <div id="app-shell" class="hidden">
+
+    <!-- Modal Konfirmasi -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4">
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-5 shadow-xl">
+        <h3 id="confirm-title" class="text-base font-bold mb-1.5">Konfirmasi</h3>
+        <p id="confirm-message" class="text-xs text-slate-600 dark:text-slate-300 mb-5 leading-relaxed"></p>
+        <div class="flex justify-end gap-2">
+          <button id="confirm-cancel" class="px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800">Batal</button>
+          <button id="confirm-ok" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-blue-600 text-white">Ya</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Ganti Password -->
+    <div id="password-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4">
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-5 shadow-xl">
+        <div class="flex items-center justify-between mb-3">
+          <h3 id="password-modal-title" class="text-base font-bold">Ganti Password</h3>
+          <button onclick="closePasswordModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+        </div>
+        <form id="password-form" class="space-y-3">
+          <p id="password-modal-desc" class="text-xs text-slate-500"></p>
+          <div>
+            <label class="block text-xs font-medium text-slate-500 mb-1">Password Baru</label>
+            <input type="password" id="password-input" minlength="4" placeholder="Minimal 4 karakter" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+          </div>
+          <div class="flex justify-end gap-2 pt-1">
+            <button type="button" onclick="closePasswordModal()" class="px-3.5 py-2 rounded-xl text-xs bg-slate-100 dark:bg-slate-800">Batal</button>
+            <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 text-white">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Edit -->
+    <div id="edit-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4">
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-5 shadow-xl">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-bold">Edit Transaksi</h3>
+          <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+        </div>
+        <form id="edit-form" class="space-y-3">
+          <input type="hidden" id="edit-id" />
+          <div>
+            <label class="block text-xs font-medium text-slate-500 mb-1">Akun</label>
+            <select id="edit-account" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm"></select>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-medium text-slate-500 mb-1">Nominal (Rp)</label>
+              <input type="number" id="edit-amount" min="100" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm font-semibold" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-500 mb-1">Tanggal</label>
+              <input type="date" id="edit-date" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-500 mb-1">Catatan</label>
+            <input type="text" id="edit-note" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+          </div>
+          <div class="flex justify-end gap-2 pt-1">
+            <button type="button" onclick="closeEditModal()" class="px-3.5 py-2 rounded-xl text-xs bg-slate-100 dark:bg-slate-800">Batal</button>
+            <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 text-white">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+      <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-base sm:text-lg font-bold">Catatan Keuangan</h1>
+              <span id="sync-badge" class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500">Lokal</span>
+            </div>
+            <p id="profile-subtitle" class="text-xs text-slate-500">Nov 2026 • Budget Rp1.200.000</p>
+          </div>
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <select id="profile-select" onchange="switchProfile(this.value)" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1.5 text-xs font-medium"></select>
+            <button type="button" onclick="openNewAccountModal()" class="px-2.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-xs font-semibold text-blue-700 dark:text-blue-300">
+              + Akun
+            </button>
+            <button type="button" onclick="openSetPasswordModal()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium">
+              Ganti PW
+            </button>
+            <button type="button" onclick="lockAndLogout()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium">
+              Keluar
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <button id="theme-toggle" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs" title="Ganti Tema">
+            <span class="theme-icon-dark hidden">☀️</span>
+            <span class="theme-icon-light">🌙</span>
+          </button>
+          <button onclick="exportData()" class="px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium">Export</button>
+          <label class="cursor-pointer px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium">
+            Import
+            <input type="file" id="import-file" accept=".json" class="hidden" onchange="importData(event)" />
+          </label>
+          <button onclick="confirmResetMonth()" class="px-2.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-xs font-medium text-rose-700 dark:text-rose-300">Reset</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 pt-5 space-y-5">
+
+      <!-- Ringkasan 4 Angka Utama -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4">
+          <span class="text-xs text-slate-500">Sisa Dana</span>
+          <div id="stat-total-all" class="text-xl font-bold mt-1">Rp0</div>
+          <p id="stat-total-spent" class="text-[11px] text-slate-400 mt-1">Terpakai: Rp0</p>
+        </div>
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4">
+          <span id="stat-card2-label" class="text-xs text-slate-500">bluSaving</span>
+          <div id="stat-blusaving" class="text-xl font-bold text-cyan-600 dark:text-cyan-400 mt-1">Rp0</div>
+          <p id="stat-card2-sub" class="text-[11px] text-slate-400 mt-1">bluAccount: Rp0</p>
+        </div>
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4">
+          <span id="stat-card3-label" class="text-xs text-slate-500">GoPay</span>
+          <div id="stat-gopay" class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">Rp0</div>
+          <p id="stat-gopay-detail" class="text-[11px] text-slate-400 mt-1">Coins terpisah</p>
+        </div>
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4">
+          <span id="stat-envelope-label" class="text-xs text-slate-500">Amplop Minggu 1</span>
+          <div id="stat-envelope" class="text-xl font-bold text-amber-600 dark:text-amber-400 mt-1">Rp0</div>
+          <p id="stat-envelope-sub" class="text-[11px] text-slate-400 mt-1">Rollover: Rp0</p>
+        </div>
+      </section>
+
+      <!-- Form + Amplop & Saldo Akun -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+        <!-- Kiri: Form Pengeluaran -->
+        <section class="lg:col-span-5">
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <h2 class="text-sm font-bold mb-3">Catat Pengeluaran</h2>
+
+            <!-- Preset -->
+            <div id="preset-bar" class="flex flex-wrap gap-1.5 mb-4"></div>
+
+            <form id="expense-form" class="space-y-3">
+              <div>
+                <label for="input-account" class="block text-xs font-medium text-slate-500 mb-1">Akun</label>
+                <select id="input-account" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm"></select>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label for="input-amount" class="block text-xs font-medium text-slate-500 mb-1">Nominal (Rp)</label>
+                  <input type="number" id="input-amount" min="100" step="100" placeholder="15000" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm font-semibold" />
+                </div>
+                <div>
+                  <label for="input-date" class="block text-xs font-medium text-slate-500 mb-1">Tanggal</label>
+                  <input type="date" id="input-date" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+                </div>
+              </div>
+
+              <div>
+                <label for="input-note" class="block text-xs font-medium text-slate-500 mb-1">Catatan</label>
+                <input type="text" id="input-note" placeholder="Makan siang, parkir, isi bensin..." required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+              </div>
+
+              <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition">
+                Simpan
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Kanan: Amplop & Saldo Akun -->
+        <section class="lg:col-span-7 space-y-5">
+
+          <!-- 4 Amplop Tunai -->
+          <div id="envelope-section" class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div>
+                <h2 class="text-sm font-bold">Amplop Tunai (Rp400.000)</h2>
+                <p class="text-xs text-slate-500">Sisa amplop mingguan masuk ke Rollover</p>
+              </div>
+              <button onclick="handleNextEnvelope()" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold">
+                Rollover & Minggu Berikutnya
+              </button>
+            </div>
+
+            <div id="envelopes-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-3"></div>
+
+            <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 px-3.5 py-2.5 flex items-center justify-between gap-2">
+              <div>
+                <span class="text-xs font-semibold">Saldo Rollover</span>
+                <p class="text-[11px] text-slate-500">Sisa amplop mingguan</p>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <span id="rollover-balance" class="text-sm font-bold text-amber-600 dark:text-amber-400">Rp0</span>
+                <button onclick="transferRolloverToDate()" class="px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-600 text-[11px] font-medium hover:bg-slate-100 dark:hover:bg-slate-700">
+                  + Ngedate
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Saldo Akun -->
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-sm font-bold">Saldo Per Akun</h2>
+              <button id="coins-btn" onclick="adjustGoPayCoins()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-medium">
+                Coins: <span id="coins-badge">373</span>
+              </button>
+            </div>
+            <div id="accounts-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          </div>
+
+        </section>
+      </div>
+
+      <!-- Riwayat Transaksi -->
+      <section class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <h2 class="text-sm font-bold">Riwayat Pengeluaran</h2>
+          <div class="flex gap-2">
+            <select id="filter-account" onchange="renderTransactions()" class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1.5 text-xs"></select>
+            <input type="text" id="search-note" oninput="renderTransactions()" placeholder="Cari catatan..." class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1.5 text-xs" />
+          </div>
+        </div>
+        <div id="transactions-container" class="overflow-x-auto"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modal Akun Baru -->
+  <div id="new-account-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-5 shadow-xl">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-bold">Buat Akun Baru</h3>
+        <button onclick="closeNewAccountModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+      <form id="new-account-form" class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">Nama Akun</label>
+          <input type="text" id="new-acc-name" placeholder="Contoh: Cadangan / Proyek" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">Saldo Awal (Rp)</label>
+          <input type="number" id="new-acc-balance" min="0" step="100" value="0" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm font-semibold" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">Password Akun</label>
+          <input type="password" id="new-acc-password" placeholder="Minimal 4 karakter" minlength="4" required class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+        </div>
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" onclick="closeNewAccountModal()" class="px-3.5 py-2 rounded-xl text-xs bg-slate-100 dark:bg-slate-800">Batal</button>
+          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 text-white">Buat</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyD5cX7eb4c4KHxTkuauKtIIrtcM7fk8NAs",
+      authDomain: "masvoorii-pk.firebaseapp.com",
+      databaseURL: "https://masvoorii-pk-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "masvoorii-pk",
+      storageBucket: "masvoorii-pk.firebasestorage.app",
+      messagingSenderId: "390281515450",
+      appId: "1:390281515450:web:fd8230f88885fcac414d83"
+    };
+    const DB_PATH = 'masvoorii_pk';
+
+    const STORAGE_KEY = 'fachri_keuangan_profiles_v1';
+    const THEME_KEY = 'fachri_keuangan_theme';
+    const FACHRI_DEFAULT_HASH = 'ef597a888cef1c26e524492fb437e11ec5de730df52c355fb545276441ce4cd7';
+    const TODAY = new Date().toISOString().slice(0, 10);
+
+    const app = initializeApp(FIREBASE_CONFIG);
+    const db = getDatabase(app);
+    const dbRef = ref(db, DB_PATH);
+
+    async function hashPassword(pw) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+      return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function getFachriState() {
+      return {
+        isCanvas: false,
+        bluAccountMain: 0,
+        gopayCoins: 373,
+        activeEnvelopeIndex: 0,
+        rolloverBalance: 0,
+        envelopes: [
+          { id: 1, name: 'Minggu 1', initial: 100000, balance: 100000, status: 'active' },
+          { id: 2, name: 'Minggu 2', initial: 100000, balance: 100000, status: 'locked' },
+          { id: 3, name: 'Minggu 3', initial: 100000, balance: 100000, status: 'locked' },
+          { id: 4, name: 'Minggu 4', initial: 100000, balance: 100000, status: 'locked' },
+        ],
+        accounts: {
+          gopay: { id: 'gopay', name: 'GoPay', initial: 301419, balance: 301419, color: 'bg-emerald-500' },
+          dana: { id: 'dana', name: 'DANA', initial: 119000, balance: 119000, color: 'bg-blue-500' },
+          blu_ngedate: { id: 'blu_ngedate', name: 'bluSaving - Ngedate', initial: 225000, balance: 225000, color: 'bg-pink-500' },
+          blu_nongki: { id: 'blu_nongki', name: 'bluSaving - Nongki', initial: 80000, balance: 80000, color: 'bg-cyan-500' },
+          blu_hp: { id: 'blu_hp', name: 'bluSaving - HP Baru', initial: 100000, balance: 100000, color: 'bg-indigo-500' },
+        },
+        transactions: [],
+      };
+    }
+
+    function getBlankCanvasState(initialBalance = 0) {
+      const bal = Math.max(0, Math.round(Number(initialBalance) || 0));
+      return {
+        isCanvas: true,
+        bluAccountMain: 0,
+        gopayCoins: 0,
+        activeEnvelopeIndex: 0,
+        rolloverBalance: 0,
+        envelopes: [],
+        accounts: {
+          utama: { id: 'utama', name: 'Saldo Utama', initial: bal, balance: bal, color: 'bg-blue-500' },
+        },
+        transactions: [],
+      };
+    }
+
+    function getDefaultMultiState() {
+      return {
+        activeProfileId: 'fachri',
+        profiles: {
+          fachri: { id: 'fachri', name: 'Fachri', passwordHash: FACHRI_DEFAULT_HASH, data: getFachriState() },
+        },
+      };
+    }
+
+    function normalizeState(raw) {
+      if (!raw || typeof raw !== 'object') return getDefaultMultiState();
+      if (raw.accounts && raw.envelopes && !raw.profiles) {
+        return {
+          activeProfileId: 'fachri',
+          profiles: {
+            fachri: { id: 'fachri', name: 'Fachri', passwordHash: FACHRI_DEFAULT_HASH, data: { ...getFachriState(), ...raw, isCanvas: false } },
+          },
+        };
+      }
+      if (!raw.profiles || !raw.profiles.fachri) return getDefaultMultiState();
+      Object.values(raw.profiles).forEach((p) => {
+        if (!p.data) p.data = getFachriState();
+        if (typeof p.passwordHash !== 'string' || !p.passwordHash) {
+          p.passwordHash = p.id === 'fachri' ? FACHRI_DEFAULT_HASH : '';
+        }
+        if (!Array.isArray(p.data.transactions)) p.data.transactions = [];
+        if (!Array.isArray(p.data.envelopes)) p.data.envelopes = [];
+        if (!p.data.accounts) p.data.accounts = {};
+      });
+      if (!raw.activeProfileId || !raw.profiles[raw.activeProfileId]) {
+        raw.activeProfileId = 'fachri';
+      }
+      return raw;
+    }
+
+    function loadLocalState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? normalizeState(JSON.parse(raw)) : getDefaultMultiState();
+      } catch {
+        return getDefaultMultiState();
+      }
+    }
+
+    let multiState = loadLocalState();
+    let unlockedProfiles = new Set();
+
+    function getActiveProfile() {
+      return multiState.profiles[multiState.activeProfileId];
+    }
+
+    function getCurrentData() {
+      return getActiveProfile().data;
+    }
+
+    function isSessionUnlocked() {
+      const p = getActiveProfile();
+      return Boolean(p && p.passwordHash && unlockedProfiles.has(p.id));
+    }
+
+    function ensureUnlocked() {
+      if (isSessionUnlocked()) return true;
+      updateScreenGate();
+      showToast('Masukkan password akun terlebih dahulu.', 'warning');
+      return false;
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(multiState));
+      } catch {}
+      set(dbRef, multiState).catch(() => showToast('Gagal sinkron ke cloud.', 'error'));
+    }
+
+    function updateScreenGate() {
+      const unlocked = isSessionUnlocked();
+      document.getElementById('welcome-screen').classList.toggle('hidden', unlocked);
+      document.getElementById('app-shell').classList.toggle('hidden', !unlocked);
+
+      const welcomeSel = document.getElementById('welcome-profile-select');
+      const currentVal = welcomeSel.value || multiState.activeProfileId;
+      welcomeSel.innerHTML = Object.values(multiState.profiles)
+        .map((p) => `<option value="${p.id}" ${p.id === currentVal ? 'selected' : ''}>${p.name}</option>`)
+        .join('');
+    }
+
+    function lockAndLogout() {
+      unlockedProfiles.clear();
+      document.getElementById('welcome-password-input').value = '';
+      updateScreenGate();
+      showToast('Akun dikunci.');
+    }
+
+    document.getElementById('welcome-login-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const selectedId = document.getElementById('welcome-profile-select').value;
+      const pw = document.getElementById('welcome-password-input').value;
+      const target = multiState.profiles[selectedId];
+      if (!target || !pw) return;
+
+      const hashed = await hashPassword(pw);
+      if (hashed !== target.passwordHash) {
+        showToast('Password salah.', 'error');
+        document.getElementById('welcome-password-input').value = '';
+        document.getElementById('welcome-password-input').focus();
+        return;
+      }
+
+      unlockedProfiles.add(selectedId);
+      multiState.activeProfileId = selectedId;
+      document.getElementById('welcome-password-input').value = '';
+      saveState();
+      renderAll();
+      showToast(`Selamat datang, ${target.name}.`);
+    });
+
+    function switchProfile(id) {
+      const target = multiState.profiles[id];
+      if (!target) return;
+      multiState.activeProfileId = id;
+      saveState();
+      if (!unlockedProfiles.has(id)) {
+        document.getElementById('welcome-profile-select').value = id;
+        document.getElementById('welcome-password-input').value = '';
+        updateScreenGate();
+        document.getElementById('welcome-password-input').focus();
+        return;
+      }
+      renderAll();
+      showToast(`Pindah ke akun ${target.name}.`);
+    }
+
+    function openSetPasswordModal() {
+      if (!ensureUnlocked()) return;
+      const profile = getActiveProfile();
+      document.getElementById('password-modal-title').textContent = `Ganti Password: ${profile.name}`;
+      document.getElementById('password-modal-desc').textContent = 'Masukkan password baru (minimal 4 karakter).';
+      document.getElementById('password-input').value = '';
+      const modal = document.getElementById('password-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('password-input').focus();
+    }
+
+    function closePasswordModal() {
+      const modal = document.getElementById('password-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    document.getElementById('password-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (!ensureUnlocked()) return;
+      const pw = document.getElementById('password-input').value;
+      if (pw.length < 4) {
+        showToast('Password minimal 4 karakter.', 'error');
+        return;
+      }
+      const profile = getActiveProfile();
+      profile.passwordHash = await hashPassword(pw);
+      saveState();
+      closePasswordModal();
+      renderAll();
+      showToast(`Password akun ${profile.name} diperbarui.`);
+    });
+
+    function openNewAccountModal() {
+      document.getElementById('new-acc-name').value = '';
+      document.getElementById('new-acc-balance').value = '0';
+      document.getElementById('new-acc-password').value = '';
+      const modal = document.getElementById('new-account-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('new-acc-name').focus();
+    }
+
+    function closeNewAccountModal() {
+      const modal = document.getElementById('new-account-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    document.getElementById('new-account-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const name = document.getElementById('new-acc-name').value.trim();
+      const bal = parseInt(document.getElementById('new-acc-balance').value, 10) || 0;
+      const pw = document.getElementById('new-acc-password').value;
+      if (!name || pw.length < 4) {
+        showToast('Nama akun dan password (min. 4 karakter) wajib diisi.', 'error');
+        return;
+      }
+
+      const id = 'acc_' + Date.now().toString(36);
+      const pwHash = await hashPassword(pw);
+      multiState.profiles[id] = {
+        id,
+        name,
+        passwordHash: pwHash,
+        data: getBlankCanvasState(bal),
+      };
+      unlockedProfiles.add(id);
+      multiState.activeProfileId = id;
+      saveState();
+      closeNewAccountModal();
+      renderAll();
+      showToast(`Akun "${name}" dibuat.`);
+    });
+
+    function formatRupiah(num) {
+      const n = Math.round(Number(num) || 0);
+      return (n < 0 ? '-Rp' : 'Rp') + Math.abs(n).toLocaleString('id-ID');
+    }
+
+    function formatDateIndo(dateStr) {
+      if (!dateStr) return '-';
+      const [y, m, d] = dateStr.split('-');
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+      return `${parseInt(d, 10)} ${months[parseInt(m, 10) - 1] || m} ${y}`;
+    }
+
+    function getAccountLabel(accountKey, envelopeWeek) {
+      const data = getCurrentData();
+      if (accountKey === 'amplop_aktif') return envelopeWeek ? `Amplop Minggu ${envelopeWeek}` : 'Amplop Tunai';
+      if (accountKey === 'rollover') return 'Rollover';
+      return data.accounts[accountKey]?.name || accountKey;
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bg = type === 'error' ? 'bg-rose-600' : type === 'warning' ? 'bg-amber-600' : 'bg-slate-900 dark:bg-blue-600';
+      toast.className = `${bg} text-white px-3.5 py-2.5 rounded-xl shadow-lg text-xs font-medium flex items-center justify-between gap-2 pointer-events-auto`;
+      toast.innerHTML = `<span>${message}</span><button onclick="this.parentElement.remove()">✕</button>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    let confirmCallback = null;
+    function openConfirmModal(title, message, onConfirm) {
+      document.getElementById('confirm-title').textContent = title;
+      document.getElementById('confirm-message').textContent = message;
+      confirmCallback = onConfirm;
+      const modal = document.getElementById('confirm-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeConfirmModal() {
+      const modal = document.getElementById('confirm-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      confirmCallback = null;
+    }
+
+    document.getElementById('confirm-cancel').addEventListener('click', closeConfirmModal);
+    document.getElementById('confirm-ok').addEventListener('click', () => {
+      if (confirmCallback) confirmCallback();
+      closeConfirmModal();
+    });
+
+    function syncThemeIcons(isDark) {
+      document.querySelectorAll('.theme-icon-dark').forEach((el) => el.classList.toggle('hidden', !isDark));
+      document.querySelectorAll('.theme-icon-light').forEach((el) => el.classList.toggle('hidden', isDark));
+    }
+
+    function initTheme() {
+      const isDark = localStorage.getItem(THEME_KEY) === 'dark';
+      document.documentElement.classList.toggle('dark', isDark);
+      syncThemeIcons(isDark);
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+      syncThemeIcons(isDark);
+    }
+
+    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+    document.getElementById('welcome-theme-toggle').addEventListener('click', toggleTheme);
+
+    function applyPreset(account, amount, note) {
+      document.getElementById('input-account').value = account;
+      document.getElementById('input-amount').value = amount;
+      document.getElementById('input-note').value = note;
+      document.getElementById('input-amount').focus();
+    }
+
+    function updateBalance(accountKey, delta, envelopeIndex = null) {
+      const data = getCurrentData();
+      if (accountKey === 'amplop_aktif' && data.envelopes.length) {
+        const idx = envelopeIndex !== null ? envelopeIndex : data.activeEnvelopeIndex;
+        data.envelopes[idx].balance += delta;
+      } else if (accountKey === 'rollover') {
+        data.rolloverBalance += delta;
+      } else if (data.accounts[accountKey]) {
+        data.accounts[accountKey].balance += delta;
+      }
+    }
+
+    document.getElementById('expense-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!ensureUnlocked()) return;
+
+      const data = getCurrentData();
+      const accountKey = document.getElementById('input-account').value;
+      const amount = parseInt(document.getElementById('input-amount').value, 10);
+      const date = document.getElementById('input-date').value;
+      const note = document.getElementById('input-note').value.trim();
+
+      if (!amount || amount <= 0 || !note) return;
+
+      const envIdx = accountKey === 'amplop_aktif' ? data.activeEnvelopeIndex : null;
+      const currentBal =
+        accountKey === 'amplop_aktif'
+          ? data.envelopes[envIdx].balance
+          : accountKey === 'rollover'
+          ? data.rolloverBalance
+          : data.accounts[accountKey].balance;
+
+      data.transactions.unshift({
+        id: 'tx_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        accountKey,
+        envelopeIndex: envIdx,
+        amount,
+        date,
+        note,
+      });
+
+      updateBalance(accountKey, -amount, envIdx);
+      saveState();
+      renderAll();
+
+      document.getElementById('input-amount').value = '';
+      document.getElementById('input-note').value = '';
+
+      if (currentBal - amount < 0) {
+        showToast(`Tercatat (saldo ${getAccountLabel(accountKey)} minus ${formatRupiah(Math.abs(currentBal - amount))}).`, 'warning');
+      } else {
+        showToast(`${formatRupiah(amount)} dicatat.`);
+      }
+    });
+
+    function handleNextEnvelope() {
+      if (!ensureUnlocked()) return;
+      const data = getCurrentData();
+      const idx = data.activeEnvelopeIndex;
+      const currentEnv = data.envelopes[idx];
+      if (!currentEnv) return;
+
+      if (idx >= 3) {
+        if (currentEnv.balance <= 0) {
+          showToast('Sudah di Minggu 4 dan saldo Rp0.', 'warning');
+          return;
+        }
+        openConfirmModal('Rollover Sisa Minggu 4?', `Pindahkan sisa ${formatRupiah(currentEnv.balance)} ke Rollover?`, () => {
+          data.rolloverBalance += currentEnv.balance;
+          currentEnv.balance = 0;
+          currentEnv.status = 'completed';
+          saveState();
+          renderAll();
+          showToast('Sisa Minggu 4 masuk Rollover.');
+        });
+        return;
+      }
+
+      const nextEnv = data.envelopes[idx + 1];
+      const leftover = Math.max(0, currentEnv.balance);
+      const msg =
+        leftover > 0
+          ? `Sisa ${currentEnv.name} (${formatRupiah(leftover)}) masuk Rollover, lalu ${nextEnv.name} dibuka.`
+          : `Tutup ${currentEnv.name} dan buka ${nextEnv.name}?`;
+
+      openConfirmModal('Pindah Minggu Berikutnya?', msg, () => {
+        if (leftover > 0) data.rolloverBalance += leftover;
+        currentEnv.balance = 0;
+        currentEnv.status = 'completed';
+        nextEnv.status = 'active';
+        data.activeEnvelopeIndex = idx + 1;
+        saveState();
+        renderAll();
+        showToast(`${nextEnv.name} aktif.`);
+      });
+    }
+
+    function transferRolloverToDate() {
+      if (!ensureUnlocked()) return;
+      const data = getCurrentData();
+      if (data.rolloverBalance <= 0) {
+        showToast('Saldo Rollover masih Rp0.', 'warning');
+        return;
+      }
+      const amount = data.rolloverBalance;
+      openConfirmModal('Pindahkan ke Ngedate?', `Pindahkan ${formatRupiah(amount)} dari Rollover ke bluSaving - Ngedate?`, () => {
+        data.accounts.blu_ngedate.balance += amount;
+        data.accounts.blu_ngedate.initial += amount;
+        data.rolloverBalance = 0;
+        saveState();
+        renderAll();
+        showToast(`+${formatRupiah(amount)} masuk ke Ngedate.`);
+      });
+    }
+
+    function adjustGoPayCoins() {
+      if (!ensureUnlocked()) return;
+      const data = getCurrentData();
+      openConfirmModal('Nol-kan GoPay Coins?', `Reset ${data.gopayCoins} Coins menjadi 0?`, () => {
+        data.gopayCoins = 0;
+        saveState();
+        renderAll();
+        showToast('Coins di-reset ke 0.');
+      });
+    }
+
+    function deleteTransaction(txId) {
+      if (!ensureUnlocked()) return;
+      const data = getCurrentData();
+      const tx = data.transactions.find((t) => t.id === txId);
+      if (!tx) return;
+      openConfirmModal('Hapus Transaksi?', `Hapus "${tx.note}" (${formatRupiah(tx.amount)}) dan kembalikan saldonya?`, () => {
+        updateBalance(tx.accountKey, tx.amount, tx.envelopeIndex);
+        data.transactions = data.transactions.filter((t) => t.id !== txId);
+        saveState();
+        renderAll();
+        showToast('Transaksi dihapus.');
+      });
+    }
+
+    function openEditModal(txId) {
+      if (!ensureUnlocked()) return;
+      const data = getCurrentData();
+      const tx = data.transactions.find((t) => t.id === txId);
+      if (!tx) return;
+      populateAccountSelects(document.getElementById('edit-account'), false);
+      document.getElementById('edit-id').value = tx.id;
+      document.getElementById('edit-account').value = tx.accountKey;
+      document.getElementById('edit-amount').value = tx.amount;
+      document.getElementById('edit-date').value = tx.date;
+      document.getElementById('edit-note').value = tx.note;
+
+      const modal = document.getElementById('edit-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeEditModal() {
+      const modal = document.getElementById('edit-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    document.getElementById('edit-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!ensureUnlocked()) return;
+      const data = getCurrentData();
+      const txId = document.getElementById('edit-id').value;
+      const idx = data.transactions.findIndex((t) => t.id === txId);
+      if (idx === -1) return;
+
+      const oldTx = data.transactions[idx];
+      const newAccountKey = document.getElementById('edit-account').value;
+      const newAmount = parseInt(document.getElementById('edit-amount').value, 10);
+      const newDate = document.getElementById('edit-date').value;
+      const newNote = document.getElementById('edit-note').value.trim();
+
+      if (!newAmount || newAmount <= 0 || !newNote) return;
+
+      updateBalance(oldTx.accountKey, oldTx.amount, oldTx.envelopeIndex);
+      const newEnvIndex = newAccountKey === 'amplop_aktif' ? (oldTx.envelopeIndex ?? data.activeEnvelopeIndex) : null;
+      updateBalance(newAccountKey, -newAmount, newEnvIndex);
+
+      data.transactions[idx] = { ...oldTx, accountKey: newAccountKey, envelopeIndex: newEnvIndex, amount: newAmount, date: newDate, note: newNote };
+      saveState();
+      closeEditModal();
+      renderAll();
+      showToast('Transaksi diperbarui.');
+    });
+
+    function exportData() {
+      if (!ensureUnlocked()) return;
+      const blob = new Blob([JSON.stringify(multiState, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `catatan-keuangan-${TODAY}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Backup diunduh.');
+    }
+
+    function importData(event) {
+      if (!ensureUnlocked()) return;
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          multiState = normalizeState(imported);
+          saveState();
+          renderAll();
+          showToast('Data dipulihkan.');
+        } catch {
+          showToast('File JSON tidak valid.', 'error');
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    function confirmResetMonth() {
+      if (!ensureUnlocked()) return;
+      const profile = getActiveProfile();
+      const isFachri = profile.id === 'fachri';
+      openConfirmModal(
+        `Reset ${profile.name}?`,
+        isFachri
+          ? 'Semua transaksi akun Fachri dihapus dan saldo kembali ke setup awal.'
+          : `Kosongkan transaksi dan kembalikan saldo awal akun ${profile.name}?`,
+        () => {
+          const prevBal = profile.data.accounts.utama?.initial ?? 0;
+          profile.data = isFachri ? getFachriState() : getBlankCanvasState(prevBal);
+          saveState();
+          renderAll();
+          showToast('Data di-reset.');
+        }
+      );
+    }
+
+    function populateAccountSelects(selectEl, includeAllOption) {
+      const data = getCurrentData();
+      const opts = [];
+      if (includeAllOption) opts.push('<option value="all">Semua Akun</option>');
+      if (!data.isCanvas && data.envelopes.length) {
+        const activeEnv = data.envelopes[data.activeEnvelopeIndex] || data.envelopes[0];
+        opts.push(`<option value="amplop_aktif">Amplop Tunai (${activeEnv.name} • ${formatRupiah(activeEnv.balance)})</option>`);
+        opts.push('<option value="rollover">Rollover</option>');
+      }
+      Object.values(data.accounts).forEach((acc) => {
+        opts.push(`<option value="${acc.id}">${acc.name}</option>`);
+      });
+      selectEl.innerHTML = opts.join('');
+    }
+
+    function renderProfileUI() {
+      const sel = document.getElementById('profile-select');
+      sel.innerHTML = Object.values(multiState.profiles)
+        .map((p) => `<option value="${p.id}" ${p.id === multiState.activeProfileId ? 'selected' : ''}>${p.name}</option>`)
+        .join('');
+
+      const profile = getActiveProfile();
+      const data = profile.data;
+      document.getElementById('profile-subtitle').textContent = data.isCanvas
+        ? `Akun: ${profile.name} • Canvas`
+        : `${profile.name} • Nov 2026 • Budget Rp1.200.000`;
+
+      const presetBar = document.getElementById('preset-bar');
+      if (data.isCanvas) {
+        presetBar.innerHTML = `<button type="button" onclick="applyPreset('utama', 15000, 'Pengeluaran')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700">15rb</button>`;
+      } else {
+        presetBar.innerHTML = `
+          <button type="button" onclick="applyPreset('amplop_aktif', 2000, 'Parkir')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700">Parkir 2rb</button>
+          <button type="button" onclick="applyPreset('amplop_aktif', 15000, 'Makan')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700">Makan 15rb</button>
+          <button type="button" onclick="applyPreset('gopay', 35000, 'Pertalite')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700">Bensin 35rb</button>
+          <button type="button" onclick="applyPreset('blu_nongki', 20000, 'Kopi')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700">Kopi 20rb</button>
+          <button type="button" onclick="applyPreset('blu_ngedate', 50000, 'Ngedate')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700">Date 50rb</button>
+        `;
+      }
+
+      populateAccountSelects(document.getElementById('input-account'), false);
+      populateAccountSelects(document.getElementById('filter-account'), true);
+      document.getElementById('envelope-section').classList.toggle('hidden', Boolean(data.isCanvas));
+      document.getElementById('coins-btn').classList.toggle('hidden', Boolean(data.isCanvas));
+    }
+
+    function renderDashboard() {
+      const data = getCurrentData();
+      const acc = data.accounts;
+      const totalAccounts = Object.values(acc).reduce((s, a) => s + a.balance, 0);
+      const totalEnvelopes = data.envelopes.reduce((s, e) => s + e.balance, 0);
+      const totalAll = totalAccounts + totalEnvelopes + data.rolloverBalance + (data.bluAccountMain || 0);
+      const totalSpent = data.transactions.reduce((s, t) => s + t.amount, 0);
+
+      document.getElementById('stat-total-all').textContent = formatRupiah(totalAll);
+      document.getElementById('stat-total-spent').textContent = `Terpakai: ${formatRupiah(totalSpent)}`;
+
+      if (data.isCanvas) {
+        const utama = acc.utama || { balance: 0, initial: 0 };
+        document.getElementById('stat-card2-label').textContent = 'Saldo Awal';
+        document.getElementById('stat-blusaving').textContent = formatRupiah(utama.initial);
+        document.getElementById('stat-card2-sub').textContent = 'Canvas';
+
+        document.getElementById('stat-card3-label').textContent = 'Saldo Aktif';
+        document.getElementById('stat-gopay').textContent = formatRupiah(utama.balance);
+        document.getElementById('stat-gopay-detail').textContent = `${data.transactions.length} transaksi`;
+
+        document.getElementById('stat-envelope-label').textContent = 'Total Keluar';
+        document.getElementById('stat-envelope').textContent = formatRupiah(totalSpent);
+        document.getElementById('stat-envelope-sub').textContent = 'Akun terpisah';
+        return;
+      }
+
+      const totalBluSaving = (acc.blu_ngedate?.balance || 0) + (acc.blu_nongki?.balance || 0) + (acc.blu_hp?.balance || 0);
+      document.getElementById('stat-card2-label').textContent = 'bluSaving';
+      document.getElementById('stat-blusaving').textContent = formatRupiah(totalBluSaving);
+      document.getElementById('stat-card2-sub').textContent = 'bluAccount: Rp0';
+
+      document.getElementById('stat-card3-label').textContent = 'GoPay';
+      document.getElementById('stat-gopay').textContent = formatRupiah(acc.gopay?.balance || 0);
+      document.getElementById('stat-gopay-detail').textContent = `+ ${data.gopayCoins} Coins (terpisah)`;
+      document.getElementById('coins-badge').textContent = data.gopayCoins;
+
+      const activeEnv = data.envelopes[data.activeEnvelopeIndex] || data.envelopes[0];
+      document.getElementById('stat-envelope-label').textContent = `Amplop ${activeEnv.name}`;
+      document.getElementById('stat-envelope').textContent = formatRupiah(activeEnv.balance);
+      document.getElementById('stat-envelope-sub').textContent = `Rollover: ${formatRupiah(data.rolloverBalance)}`;
+    }
+
+    function renderEnvelopes() {
+      const data = getCurrentData();
+      if (data.isCanvas || !data.envelopes.length) return;
+
+      const grid = document.getElementById('envelopes-grid');
+      grid.innerHTML = data.envelopes
+        .map((env) => {
+          const isActive = env.status === 'active';
+          const isCompleted = env.status === 'completed';
+          const style = isActive
+            ? 'border-amber-400 bg-amber-50/70 dark:bg-amber-950/30'
+            : 'border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 opacity-80';
+          const statusText = isActive ? 'Aktif' : isCompleted ? 'Selesai' : 'Terkunci';
+
+          return `
+            <div class="rounded-xl border p-3 ${style}">
+              <div class="flex items-center justify-between text-[11px] mb-1">
+                <span class="font-semibold">${env.name}</span>
+                <span class="text-slate-500">${statusText}</span>
+              </div>
+              <div class="text-sm font-bold ${env.balance < 0 ? 'text-rose-600' : ''}">${formatRupiah(env.balance)}</div>
+            </div>
+          `;
+        })
+        .join('');
+
+      document.getElementById('rollover-balance').textContent = formatRupiah(data.rolloverBalance);
+    }
+
+    function renderAccounts() {
+      const data = getCurrentData();
+      const container = document.getElementById('accounts-list');
+      container.innerHTML = Object.values(data.accounts)
+        .map((acc) => {
+          const pct = acc.initial > 0 ? Math.max(0, Math.min(100, Math.round((acc.balance / acc.initial) * 100))) : 0;
+          return `
+            <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-3.5">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-semibold">${acc.name}</span>
+                <span class="text-[11px] text-slate-400">${pct}%</span>
+              </div>
+              <div class="text-base font-bold mb-2 ${acc.balance < 0 ? 'text-rose-600' : ''}">
+                ${formatRupiah(acc.balance)} <span class="text-[11px] font-normal text-slate-400">/ ${formatRupiah(acc.initial)}</span>
+              </div>
+              <div class="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                <div class="h-full rounded-full ${acc.color || 'bg-blue-500'}" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function renderTransactions() {
+      const data = getCurrentData();
+      const container = document.getElementById('transactions-container');
+      const filterAcc = document.getElementById('filter-account').value;
+      const query = document.getElementById('search-note').value.trim().toLowerCase();
+
+      const filtered = data.transactions.filter((tx) => {
+        const matchAcc = filterAcc === 'all' || tx.accountKey === filterAcc;
+        const matchQuery = !query || tx.note.toLowerCase().includes(query);
+        return matchAcc && matchQuery;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<p class="text-center py-8 text-xs text-slate-400">Belum ada catatan pengeluaran.</p>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-200 dark:border-slate-800 text-[11px] text-slate-400">
+              <th class="py-2.5 px-2">Tanggal</th>
+              <th class="py-2.5 px-2">Catatan</th>
+              <th class="py-2.5 px-2">Akun</th>
+              <th class="py-2.5 px-2 text-right">Nominal</th>
+              <th class="py-2.5 px-2 text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+            ${filtered
+              .map((tx) => {
+                const envNum = tx.envelopeIndex !== null ? tx.envelopeIndex + 1 : null;
+                return `
+                  <tr>
+                    <td class="py-2.5 px-2 whitespace-nowrap text-slate-500">${formatDateIndo(tx.date)}</td>
+                    <td class="py-2.5 px-2 font-medium">${tx.note}</td>
+                    <td class="py-2.5 px-2 whitespace-nowrap text-slate-500">${getAccountLabel(tx.accountKey, envNum)}</td>
+                    <td class="py-2.5 px-2 whitespace-nowrap text-right font-semibold text-rose-600 dark:text-rose-400">-${formatRupiah(tx.amount)}</td>
+                    <td class="py-2.5 px-2 whitespace-nowrap text-right">
+                      <button onclick="openEditModal('${tx.id}')" class="px-1.5 py-1 text-slate-500 hover:text-blue-600" title="Edit">Edit</button>
+                      <button onclick="deleteTransaction('${tx.id}')" class="px-1.5 py-1 text-slate-500 hover:text-rose-600" title="Hapus">Hapus</button>
+                    </td>
+                  </tr>
+                `;
+              })
+              .join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderAll() {
+      updateScreenGate();
+      if (!isSessionUnlocked()) return;
+      renderProfileUI();
+      renderDashboard();
+      renderEnvelopes();
+      renderAccounts();
+      renderTransactions();
+    }
+
+    Object.assign(window, {
+      switchProfile,
+      lockAndLogout,
+      openNewAccountModal,
+      closeNewAccountModal,
+      openSetPasswordModal,
+      closePasswordModal,
+      applyPreset,
+      handleNextEnvelope,
+      transferRolloverToDate,
+      adjustGoPayCoins,
+      deleteTransaction,
+      openEditModal,
+      closeEditModal,
+      exportData,
+      importData,
+      confirmResetMonth,
+      renderTransactions,
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('input-date').value = TODAY;
+      initTheme();
+      renderAll();
+
+      const badge = document.getElementById('sync-badge');
+      const welcomeBadge = document.getElementById('welcome-sync-badge');
+      onValue(dbRef, (snapshot) => {
+        const val = snapshot.val();
+        if (val) {
+          multiState = normalizeState(val);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(multiState));
+          renderAll();
+        } else {
+          set(dbRef, multiState);
+        }
+        [badge, welcomeBadge].forEach((b) => {
+          if (!b) return;
+          b.textContent = 'Cloud Sync';
+          b.className = 'px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300';
+        });
+      }, () => {
+        [badge, welcomeBadge].forEach((b) => {
+          if (b) b.textContent = 'Offline';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
