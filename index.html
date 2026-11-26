@@ -406,6 +406,8 @@
     </div>
   </div>
 
+  import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+  
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
@@ -429,6 +431,8 @@
 
     const app = initializeApp(FIREBASE_CONFIG);
     const db = getDatabase(app);
+    const auth = getAuth(app);
+    await signInAnonymously(auth);
     const dbRef = ref(db, DB_PATH);
 
     async function hashPassword(pw) {
