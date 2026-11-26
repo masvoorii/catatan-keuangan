@@ -186,32 +186,21 @@
 
     <!-- Header -->
     <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800">
-      <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2.5 flex-wrap">
-          <div>
-            <div class="flex items-center gap-2">
-              <h1 class="text-base sm:text-lg font-bold">Catatan Keuangan</h1>
-              <span id="sync-badge" class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500">Lokal</span>
-            </div>
-            <p id="profile-subtitle" class="text-xs text-slate-500">Nov 2026 • Budget Rp1.200.000</p>
+      <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2 relative">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold">Catatan Keuangan</h1>
+            <span id="sync-badge" class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500">Lokal</span>
           </div>
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <button type="button" onclick="openNewAccountModal()" class="px-2.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-xs font-semibold text-blue-700 dark:text-blue-300">
-              + Akun
-            </button>
-            <button type="button" onclick="openSetPasswordModal()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium">
-              Ganti PW
-            </button>
-            <button type="button" onclick="confirmDeleteAccount()" class="px-2.5 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-xs font-medium text-rose-700 dark:text-rose-300">
-              Hapus Akun
-            </button>
-            <button type="button" onclick="lockAndLogout()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium">
-              Keluar
-            </button>
-          </div>
+          <p id="profile-subtitle" class="text-xs text-slate-500">Nov 2026 • Budget Rp1.200.000</p>
         </div>
 
-        <div class="flex items-center gap-1.5 flex-wrap">
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-1.5 flex-wrap">
+          <button type="button" onclick="openNewAccountModal()" class="px-2.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-xs font-semibold text-blue-700 dark:text-blue-300">+ Akun</button>
+          <button type="button" onclick="openSetPasswordModal()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium">Ganti PW</button>
+          <button type="button" onclick="confirmDeleteAccount()" class="px-2.5 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-xs font-medium text-rose-700 dark:text-rose-300">Hapus Akun</button>
+          <button type="button" onclick="lockAndLogout()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium">Keluar</button>
           <button id="theme-toggle" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs" title="Ganti Tema">
             <span class="theme-icon-dark hidden">☀️</span>
             <span class="theme-icon-light">🌙</span>
@@ -222,6 +211,30 @@
             <input type="file" id="import-file" accept=".json" class="hidden" onchange="importData(event)" />
           </label>
           <button onclick="confirmResetMonth()" class="px-2.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-xs font-medium text-rose-700 dark:text-rose-300">Reset</button>
+        </div>
+
+        <!-- Mobile Sandwich Menu -->
+        <div class="flex md:hidden items-center gap-1.5">
+          <button type="button" onclick="toggleTheme()" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs" title="Ganti Tema">
+            <span class="theme-icon-dark hidden">☀️</span>
+            <span class="theme-icon-light">🌙</span>
+          </button>
+          <details id="mobile-menu" class="relative">
+            <summary class="list-none cursor-pointer p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold select-none">☰</summary>
+            <div class="absolute right-0 mt-2 w-48 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 flex flex-col gap-1 z-50 text-xs" onclick="if(event.target.closest('button,label')) document.getElementById('mobile-menu').removeAttribute('open')">
+              <button type="button" onclick="openNewAccountModal()" class="text-left px-3 py-2 rounded-xl font-semibold text-blue-600 dark:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800">+ Akun</button>
+              <button type="button" onclick="openSetPasswordModal()" class="text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">Ganti PW</button>
+              <button type="button" onclick="exportData()" class="text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">Export</button>
+              <label class="cursor-pointer px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+                Import
+                <input type="file" accept=".json" class="hidden" onchange="importData(event)" />
+              </label>
+              <hr class="border-slate-100 dark:border-slate-800 my-1" />
+              <button type="button" onclick="confirmResetMonth()" class="text-left px-3 py-2 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40">Reset</button>
+              <button type="button" onclick="confirmDeleteAccount()" class="text-left px-3 py-2 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40">Hapus Akun</button>
+              <button type="button" onclick="lockAndLogout()" class="text-left px-3 py-2 rounded-xl font-medium hover:bg-slate-100 dark:hover:bg-slate-800">Keluar</button>
+            </div>
+          </details>
         </div>
       </div>
     </header>
@@ -412,7 +425,7 @@
     const THEME_KEY = 'fachri_keuangan_theme';
     const FACHRI_DEFAULT_HASH = 'ef597a888cef1c26e524492fb437e11ec5de730df52c355fb545276441ce4cd7';
     const WALLET_COLORS = ['bg-blue-500', 'bg-emerald-500', 'bg-cyan-500', 'bg-pink-500', 'bg-indigo-500', 'bg-amber-500'];
-    const TODAY = new Date().toISOString().slice(0, 10);
+    const getToday = () => new Date().toLocaleDateString('en-CA');
 
     const app = initializeApp(FIREBASE_CONFIG);
     const db = getDatabase(app);
@@ -540,11 +553,18 @@
       return false;
     }
 
-    function saveState() {
+    function saveState(syncAll = false) {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(multiState));
       } catch {}
-      set(dbRef, multiState).catch(() => showToast('Gagal sinkron ke cloud.', 'error'));
+      const pid = multiState.activeProfileId;
+      const targetRef = !syncAll && pid && multiState.profiles[pid]
+        ? ref(db, `${DB_PATH}/profiles/${pid}`)
+        : dbRef;
+      const payload = !syncAll && pid && multiState.profiles[pid]
+        ? multiState.profiles[pid]
+        : multiState;
+      set(targetRef, payload).catch(() => showToast('Gagal sinkron ke cloud.', 'error'));
     }
 
     function updateScreenGate() {
@@ -738,7 +758,7 @@
             accountLabel: name,
             envelopeIndex: null,
             amount: Math.abs(diff),
-            date: TODAY,
+            date: getToday(),
             note: syncNote,
             isBalanceSync: true,
             signedDelta: diff,
@@ -888,7 +908,7 @@
             multiState.activeProfileId = remainingIds[0];
           }
 
-          saveState();
+          saveState(true);
           renderAll();
           showToast(`Akun "${target.name}" dihapus.`);
         }
@@ -940,12 +960,16 @@
       return data.accounts[accountKey]?.name || fallbackLabel || accountKey;
     }
 
+    function escapeHtml(str) {
+      return String(str ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
     function showToast(message, type = 'success') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       const bg = type === 'error' ? 'bg-rose-600' : type === 'warning' ? 'bg-amber-600' : 'bg-slate-900 dark:bg-blue-600';
       toast.className = `${bg} text-white px-3.5 py-2.5 rounded-xl shadow-lg text-xs font-medium flex items-center justify-between gap-2 pointer-events-auto`;
-      toast.innerHTML = `<span>${message}</span><button onclick="this.parentElement.remove()">✕</button>`;
+      toast.innerHTML = `<span>${escapeHtml(message)}</span><button onclick="this.parentElement.remove()">✕</button>`;
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
     }
@@ -1204,7 +1228,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `catatan-keuangan-${TODAY}.json`;
+      a.download = `catatan-keuangan-${getToday()}.json`;
       a.click();
       URL.revokeObjectURL(url);
       showToast('Backup diunduh.');
@@ -1219,7 +1243,7 @@
         try {
           const imported = JSON.parse(e.target.result);
           multiState = normalizeState(imported);
-          saveState();
+          saveState(true);
           renderAll();
           showToast('Data dipulihkan.');
         } catch {
@@ -1469,7 +1493,7 @@
                 return `
                   <tr>
                     <td class="py-2.5 px-2 whitespace-nowrap text-slate-500">${formatDateIndo(tx.date)}</td>
-                    <td class="py-2.5 px-2 font-medium">${tx.note}</td>
+                    <td class="py-2.5 px-2 font-medium">${escapeHtml(tx.note)}</td>
                     <td class="py-2.5 px-2 whitespace-nowrap text-slate-500">${getAccountLabel(tx.accountKey, envNum, tx.accountLabel)}</td>
                     <td class="py-2.5 px-2 whitespace-nowrap text-right font-semibold ${amtClass}">${amtPrefix}${formatRupiah(tx.amount)}</td>
                     <td class="py-2.5 px-2 whitespace-nowrap text-right">
@@ -1496,6 +1520,7 @@
     }
 
     Object.assign(window, {
+      toggleTheme,
       lockAndLogout,
       openNewAccountModal,
       closeNewAccountModal,
@@ -1523,7 +1548,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       ['input-amount', 'edit-amount', 'new-acc-balance', 'env-setup-amount', 'wallet-initial', 'wallet-balance'].forEach(attachAutoDotFormat);
-      document.getElementById('input-date').value = TODAY;
+      document.getElementById('input-date').value = getToday();
       initTheme();
       renderAll();
 
